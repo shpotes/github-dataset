@@ -1,3 +1,4 @@
+
 import argparse
 import json
 import os
@@ -89,7 +90,7 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
 
-    source = json.load(open(args.source, 'w'))
-    allow_list = json.load(open(args.source, 'w'))
+    source = json.load(open(args.source, 'r'))
+    allow_list = json.load(open(args.source, 'r'))
 
     main(args.target_dir, source, allow_list, args.min_dump_size)
