@@ -1,0 +1,2 @@
+allow_list.json filter=lfs diff=lfs merge=lfs -text
+source.json filter=lfs diff=lfs merge=lfs -text
