@@ -74,6 +74,8 @@ def main(target_dir, source, allow_list, min_dump_size=1_000):
 
         dataset.append(repo_points)
 
+    write_jsonl_file(target_dir, dataset)
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Github downloader')
     parser.add_argument(
