@@ -1,4 +1,3 @@
-
 import argparse
 import json
 import os
@@ -8,12 +7,13 @@ import uuid
 from tqdm import tqdm
 import jsonlines
 
+
 def get_repo_file_tree(repo_name, main_branch):
     api_url = f"https://api.github.com/repos/{repo_name}/git/trees/{main_branch}?recursive=1"
     github_key = os.environ['GITHUB_KEY']
     api_auth = requests.auth.HTTPBasicAuth('shpotes', github_key)
     response = requests.get(api_url, auth=api_auth)
-
+    return response
 
 def write_jsonl_file(target_dir, dataset):
     target_path = f'{target_dir}/{uuid.uuid4()}.jsonl'
@@ -21,8 +21,8 @@ def write_jsonl_file(target_dir, dataset):
     with jsonlines.Writer(open(target_path, 'w')) as writer:
         writer.write_all(dataset)
 
-
 def main(target_dir, source, allow_list, min_dump_size=1_000):
+    dataset = []
     for i, repo in tqdm(enumerate(source)):
         try:
             api_response = get_repo_file_tree(repo['name'], repo['lastCommitSHA'])
@@ -30,7 +30,7 @@ def main(target_dir, source, allow_list, min_dump_size=1_000):
             continue
 
         if api_response.status_code == 403:
-            if dataset > min_dump_size:
+            if len(dataset) > min_dump_size:
                 write_jsonl_file(target_dir, dataset)
                 dataset = []
 
@@ -92,7 +92,7 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
 
-    source = json.load(open(args.source, 'r'))
+    source = json.load(open(args.source, 'r'))['items']
     allow_list = json.load(open(args.source, 'r'))
 
     main(args.target_dir, source, allow_list, args.min_dump_size)
